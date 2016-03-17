@@ -9,7 +9,7 @@ for($i = 0; $i < count($allowed_extensions); $i++){
 }
 $file_extension = strtolower(end(explode('.', $filename)));
 
-$url_upload = 'images/users/upload/' . $new_file_name;
+$url_upload = 'images/users/upload/' . time() . '-' . $filename . '.' . $extension;
 $url_resized = 'images/users/resized/';
 
 if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image/png' || $_FILES['file']['type'] == 'image/pjpeg') && in_array($file_extension, $allowed_extensions)){
