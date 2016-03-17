@@ -85,8 +85,8 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 			$miniw = $mini*$src_ratio;
 			$minih = $mini;
 			
-			$miniurl = $url_resized . time() . '-' $minix . 'x' . $miniy . '-' . $filename . '.' . $extension;
-			$lurl = $url_resized . time() . '-' $lx . 'x' . $ly . '-' . $filename . '.' . $extension;
+			$miniurl = $url_resized . time() . '-' . $minix . 'x' . $miniy . '-' . $filename . '.' . $extension;
+			$lurl = $url_resized . time() . '-' . $lx . 'x' . $ly . '-' . $filename . '.' . $extension;
 			
 			if($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image/pjpeg'){
 				//profile
