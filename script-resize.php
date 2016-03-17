@@ -197,7 +197,7 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 				}
 				unset($lresult);
 			}
-			elseif(($_FILES['file']['type'] == 'image/png')){]
+			elseif($_FILES['file']['type'] == 'image/png'){
 				//mini
 				$src_img = imagecreatefrompng($url_upload);
 				if(!$src_img){
