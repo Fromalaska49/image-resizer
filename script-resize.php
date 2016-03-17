@@ -2,15 +2,12 @@
 
 $time = time();
 $filename = $_FILES['file']['name'];
-$x = ;
-$y = ;
 
 $allowed_extensions = array('jpg', 'jpeg', 'pjpeg', 'png');
 for($i = 0; $i < count($allowed_extensions); $i++){
 	$allowed_extensions[$i] = strtolower($allowed_extensions[$i]);
 }
 $file_extension = strtolower(end(explode('.', $filename)));
-$new_file_name = time() . '-' $x . 'x' . $y . '-' . $filename . '.' . $extension;
 
 $url_upload = 'images/users/upload/' . $new_file_name;
 $url_resized = 'images/users/resized/';
