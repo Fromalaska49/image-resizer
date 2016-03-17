@@ -79,13 +79,13 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 				
 				$srcw = $width;
 				$srch = $height;
-				
+				$src_ratio = $width/$height;
 				$l = 800;
-				$lw = $l*$width/$height;
+				$lw = $l*$src_ratio;
 				$lh = $l;
 				
 				$mini = 120;
-				$miniw = $mini*$width/$height;
+				$miniw = $mini*$src_ratio;
 				$minih = $mini;
 				
 				$miniurl = $url_resized . time() . '-' $minix . 'x' . $miniy . '-' . $filename . '.' . $extension;
