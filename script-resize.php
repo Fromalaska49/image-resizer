@@ -1,24 +1,11 @@
 <?php
-//echo('initiated');
-$connect = mysql_connect('localhost', 'root', 'bitnami');
-if (!$connect){
-	//echo('cannot connect\n');
-}
-mysql_select_db("socialnetwork");
-session_start();
-if (!isset($_SESSION['uid'])) {
-header("Location: login.html");
-}
 
-$uid = $_SESSION['uid'];
-$name = $_SESSION['name'];
-$sex = $_SESSION['sex'];
 $time = time();
 $filename = $_FILES["file"]["name"];
 $x = $uid . "-" . time();
 
-$allowedExts = array("jpg", "jpeg", "JPG", "JPEG", "Jpg", "Jpeg", "PNG", "Png", "png");
-$extension = end(explode(".", $_FILES["file"]["name"]));
+$allowedExts = array("jpg", "jpeg", "png");
+$extension = strtolower(end(explode(".", $filename)));
 $location = $x . "." . $extension;//$name;
 
 $ourl="images/upload/users/o/" . $location;
