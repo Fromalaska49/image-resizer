@@ -1,43 +1,38 @@
 <?php
 
 $time = time();
-$filename = $_FILES["file"]["name"];
-$x = $uid . "-" . time();
+$filename = $_FILES['file']['name'];
+$x = ;
+$y = ;
 
-$allowedExts = array("jpg", "jpeg", "png");
-$extension = strtolower(end(explode(".", $filename)));
-$location = $x . "." . $extension;//$name;
+$allowed_extensions = array('jpg', 'jpeg', 'pjpeg', 'png');
+for($i = 0; $i < count($allowed_extensions); $i++){
+	$allowed_extensions[$i] = strtolower($allowed_extensions[$i]);
+}
+$file_extension = strtolower(end(explode('.', $filename)));
+$new_file_name = time() . '-' $x . 'x' . $y . '-' . $filename . '.' . $extension;
 
-$ourl="images/upload/users/o/" . $location;
-$purl='images/upload/users/p/' . $location;
-$miniurl='images/upload/users/mini/' . $location;
-$surl='images/upload/users/s/' . $location;
-$murl='images/upload/users/m/' . $location;
-$lurl='images/upload/users/l/' . $location;
+$url_upload = 'images/users/upload/' . $new_file_name;
+$url_resized = 'images/users/resized/' . $new_file_name;
 
-//($_FILES["file"]["type"] == "image/gif")||
-//)
-//()
-if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "image/png") || ($_FILES["file"]["type"] == "image/pjpeg")) && in_array($extension, $allowedExts)) {
-		if ($_FILES["file"]["error"] > 0) {
-			//echo "Return Code: " . $_FILES["file"]["error"] . "<br>";
+if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image/png' || $_FILES['file']['type'] == 'image/pjpeg') && in_array($file_extension, $allowed_extensions)){
+		if($_FILES['file']['error'] != UPLOAD_ERR_OK){
+			die('Error: file upload error (' . $_FILES['file']['error'] . ')<br />');
 		}
-		else {
-			//echo "Upload: " . $_FILES["file"]["name"] . "<br>";
-			//echo "Type: " . $_FILES["file"]["type"] . "<br>";
-			//echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
-			//echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";
-			if (file_exists($ourl)) {
-				die($_FILES["file"]["name"] . " already exists.");
+		else{
+			//echo 'Upload: ' . $_FILES['file']['name'] . '<br>';
+			//echo 'Type: ' . $_FILES['file']['type'] . '<br>';
+			//echo 'Size: ' . ($_FILES['file']['size'] / 1024) . ' kB<br>';
+			//echo 'Temp file: ' . $_FILES['file']['tmp_name'] . '<br>';
+			if(file_exists($url_upload)){
+				die('Error: a file by the name of <i>' . $_FILES['file']['name'] . '</i> already exists.<br />');
 			}
 			else {
-				move_uploaded_file($_FILES["file"]["tmp_name"],
-				$ourl);
-				
-				list($width, $height, $type, $attr) = getimagesize($ourl);
-				$exif = exif_read_data($ourl);
-				if(!empty($exif['Orientation'])) {
-					switch($exif['Orientation']) {
+				move_uploaded_file($_FILES['file']['tmp_name'], $url_upload);
+				list($width, $height, $type, $attr) = getimagesize($url_upload);
+				$exif = exif_read_data($url_upload);
+				if(!empty($exif['Orientation'])){
+					switch($exif['Orientation']){
 					case 8:
 						//$src_img = imagerotate($src_img,90,0);
 						$tempwidth=$width;
@@ -77,18 +72,15 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 					$lh=800;
 				}
 				else{
-					//echo('Width is '.$width.'<br />Height is '.$height.'<br />');
-					die("There was an error determining image dimensions.");
+					die('There was an error determining image dimensions.');
 				}
 				
-				//echo('made it to GD');
-				
-				if(($_FILES["file"]["type"] == "image/jpeg")||($_FILES["file"]["type"] == "image/pjpeg")){
+				if($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image/pjpeg'){
 					//profile
 					/*
 					$exif = exif_read_data($src_img);
-					if(!empty($exif['Orientation'])) {
-						switch($exif['Orientation']) {
+					if(!empty($exif['Orientation'])){
+						switch($exif['Orientation']){
 						case 8:
 							$im1 = imagerotate($im1,90,0);
 							break;
@@ -101,13 +93,13 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 						} 
 					}
 					*/
-					$src_img = imagecreatefromjpeg($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefromjpeg($url_upload);
+					if(!$src_img){
 					    die('Error when reading the source image.');
 					}
-					$exif = exif_read_data($ourl);
-					if(!empty($exif['Orientation'])) {
-						switch($exif['Orientation']) {
+					$exif = exif_read_data($url_upload);
+					if(!empty($exif['Orientation'])){
+						switch($exif['Orientation']){
 						case 8:
 							$src_img = imagerotate($src_img,90,0);
 							break;
@@ -120,30 +112,30 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 						} 
 					}
 					$thumbnail = imagecreatetruecolor(40, 40);
-					if(!$thumbnail) {
+					if(!$thumbnail){
 					    die('Error when creating the destination image.');
 					}
 					$result = imagecopyresampled($thumbnail, $src_img, 0, 0, $srcx, $srcy, 40, 40, $srcw, $srch);
-					if(!$result) {
+					if(!$result){
 					    die('Error when generating the thumbnail.');
 					}
 					$result = imagejpeg($thumbnail, $purl);
-					if(!$result) {
+					if(!$result){
 					    die('Error when saving the thumbnail.');
 					}
 					$result = imagedestroy($thumbnail);
-					if(!$result) {
+					if(!$result){
 					    die('Error when destroying the image.');
 					}
 					unset($result);
 					//mini
-					$src_img = imagecreatefromjpeg($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefromjpeg($url_upload);
+					if(!$src_img){
 					    die('Error when reading the mini source image.');
 					}
-					$exif = exif_read_data($ourl);
-					if(!empty($exif['Orientation'])) {
-						switch($exif['Orientation']) {
+					$exif = exif_read_data($url_upload);
+					if(!empty($exif['Orientation'])){
+						switch($exif['Orientation']){
 						case 8:
 							$src_img = imagerotate($src_img,90,0);
 							break;
@@ -156,30 +148,30 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 						} 
 					}
 					$minithumbnail = imagecreatetruecolor(40, 40);
-					if(!$minithumbnail) {
+					if(!$minithumbnail){
 					    die('Error when creating the mini destination image.');
 					}
 					$miniresult = imagecopyresampled($minithumbnail, $src_img, 0, 0, $srcx, $srcy, 40, 40, $srcw, $srch);
-					if(!$miniresult) {
+					if(!$miniresult){
 					    die('Error when generating the mini thumbnail.');
 					}
 					$miniresult = imagejpeg($minithumbnail, $miniurl);
-					if(!$miniresult) {
+					if(!$miniresult){
 					    die('Error when saving the mini thumbnail.');
 					}
 					$miniresult = imagedestroy($minithumbnail);
-					if(!$miniresult) {
+					if(!$miniresult){
 					    die('Error when destroying the mini image.');
 					}
 					unset($miniresult);
 					//small
-					$src_img = imagecreatefromjpeg($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefromjpeg($url_upload);
+					if(!$src_img){
 					    die('Error when reading the source image.');
 					}
-					$exif = exif_read_data($ourl);
-					if(!empty($exif['Orientation'])) {
-						switch($exif['Orientation']) {
+					$exif = exif_read_data($url_upload);
+					if(!empty($exif['Orientation'])){
+						switch($exif['Orientation']){
 						case 8:
 							$src_img = imagerotate($src_img,90,0);
 							break;
@@ -192,30 +184,30 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 						} 
 					}
 					$sthumbnail = imagecreatetruecolor(120, 120);
-					if(!$sthumbnail) {
+					if(!$sthumbnail){
 					    die('Error when creating the small destination image.');
 					}
 					$sresult = imagecopyresampled($sthumbnail, $src_img, 0, 0, $srcx, $srcy, 120, 120, $srcw, $srch);
-					if(!$sresult) {
+					if(!$sresult){
 					    die('Error when generating the small image.');
 					}
 					$sresult = imagejpeg($sthumbnail, $surl);
-					if(!$sresult) {
+					if(!$sresult){
 					    die('Error when saving the small image.');
 					}
 					$sresult = imagedestroy($sthumbnail);
-					if(!$sresult) {
+					if(!$sresult){
 					    die('Error when destroying the small image.');
 					}
 					unset($sresult);
 					//medium
-					$src_img = imagecreatefromjpeg($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefromjpeg($url_upload);
+					if(!$src_img){
 					    die('Error when reading the medium source image.');
 					}
-					$exif = exif_read_data($ourl);
-					if(!empty($exif['Orientation'])) {
-						switch($exif['Orientation']) {
+					$exif = exif_read_data($url_upload);
+					if(!empty($exif['Orientation'])){
+						switch($exif['Orientation']){
 						case 8:
 							$src_img = imagerotate($src_img,90,0);
 							break;
@@ -228,30 +220,30 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 						} 
 					}
 					$mthumbnail = imagecreatetruecolor(300, 300);
-					if(!$mthumbnail) {
+					if(!$mthumbnail){
 					    die('Error when creating the medium destination image.');
 					}
 					$mresult = imagecopyresampled($mthumbnail, $src_img, 0, 0, $srcx, $srcy, 300, 300, $srcw, $srch);
-					if(!$mresult) {
+					if(!$mresult){
 					    die('Error when generating the medium image.');
 					}
 					$mresult = imagejpeg($mthumbnail, $murl);
-					if(!$mresult) {
+					if(!$mresult){
 					    die('Error when saving the medium image.');
 					}
 					$mresult = imagedestroy($mthumbnail);
-					if(!$mresult) {
+					if(!$mresult){
 					    die('Error when destroying the medium image.');
 					}
 					unset($mresult);
 					//large
-					$src_img = imagecreatefromjpeg($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefromjpeg($url_upload);
+					if(!$src_img){
 					    die('Error when reading the large source image.');
 					}
-					$exif = exif_read_data($ourl);
-					if(!empty($exif['Orientation'])) {
-						switch($exif['Orientation']) {
+					$exif = exif_read_data($url_upload);
+					if(!empty($exif['Orientation'])){
+						switch($exif['Orientation']){
 						case 8:
 							$src_img = imagerotate($src_img,90,0);
 							break;
@@ -264,131 +256,131 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 						} 
 					}
 					$lthumbnail = imagecreatetruecolor($lw, $lh);
-					if(!$lthumbnail) {
+					if(!$lthumbnail){
 					    die('Error when creating the large destination image.');
 					}
 					$lresult = imagecopyresampled($lthumbnail, $src_img, 0, 0, 0, 0, $lw, $lh, $width, $height);
-					if(!$lresult) {
+					if(!$lresult){
 					    die('Error when generating the large image.');
 					}
 					$lresult = imagejpeg($lthumbnail, $lurl);
-					if(!$lresult) {
+					if(!$lresult){
 					    die('Error when saving the large image.');
 					}
 					$lresult = imagedestroy($lthumbnail);
-					if(!$lresult) {
+					if(!$lresult){
 					    die('Error when destroying the large image.');
 					}
 					unset($lresult);
 				}
-				elseif(($_FILES["file"]["type"] == "image/png")){
+				elseif(($_FILES['file']['type'] == 'image/png')){
 					//profile
-					$src_img = imagecreatefrompng($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefrompng($url_upload);
+					if(!$src_img){
 					    die('Error when reading the source image.');
 					}
 					$thumbnail = imagecreatetruecolor(40, 40);
-					if(!$thumbnail) {
+					if(!$thumbnail){
 					    die('Error when creating the destination image.');
 					}
 					$result = imagecopyresampled($thumbnail, $src_img, 0, 0, $srcx, $srcy, 40, 40, $srcw, $srch);
-					if(!$result) {
+					if(!$result){
 					    die('Error when generating the thumbnail.');
 					}
 					$result = imagepng($thumbnail, $purl);
-					if(!$result) {
+					if(!$result){
 					    die('Error when saving the thumbnail.');
 					}
 					$result = imagedestroy($thumbnail);
-					if(!$result) {
+					if(!$result){
 					    die('Error when destroying the image.');
 					}
 					unset($result);
 					//mini
-					$src_img = imagecreatefrompng($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefrompng($url_upload);
+					if(!$src_img){
 					    die('Error when reading the mini source image.');
 					}
 					$minithumbnail = imagecreatetruecolor(40, 40);
-					if(!$minithumbnail) {
+					if(!$minithumbnail){
 					    die('Error when creating the mini destination image.');
 					}
 					$miniresult = imagecopyresampled($minithumbnail, $src_img, 0, 0, $srcx, $srcy, 40, 40, $srcw, $srch);
-					if(!$miniresult) {
+					if(!$miniresult){
 					    die('Error when generating the mini thumbnail.');
 					}
 					$miniresult = imagepng($minithumbnail, $miniurl);
-					if(!$miniresult) {
+					if(!$miniresult){
 					    die('Error when saving the mini thumbnail.');
 					}
 					$miniresult = imagedestroy($minithumbnail);
-					if(!$miniresult) {
+					if(!$miniresult){
 					    die('Error when destroying the mini image.');
 					}
 					unset($miniresult);
 					//small
-					$src_img = imagecreatefrompng($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefrompng($url_upload);
+					if(!$src_img){
 					    die('Error when reading the source image.');
 					}
 					$sthumbnail = imagecreatetruecolor(120, 120);
-					if(!$sthumbnail) {
+					if(!$sthumbnail){
 					    die('Error when creating the small destination image.');
 					}
 					$sresult = imagecopyresampled($sthumbnail, $src_img, 0, 0, $srcx, $srcy, 120, 120, $srcw, $srch);
-					if(!$sresult) {
+					if(!$sresult){
 					    die('Error when generating the small image.');
 					}
 					$sresult = imagepng($sthumbnail, $surl);
-					if(!$sresult) {
+					if(!$sresult){
 					    die('Error when saving the small image.');
 					}
 					$sresult = imagedestroy($sthumbnail);
-					if(!$sresult) {
+					if(!$sresult){
 					    die('Error when destroying the small image.');
 					}
 					unset($sresult);
 					//medium
-					$src_img = imagecreatefrompng($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefrompng($url_upload);
+					if(!$src_img){
 					    die('Error when reading the medium source image.');
 					}
 					$mthumbnail = imagecreatetruecolor(300, 300);
-					if(!$mthumbnail) {
+					if(!$mthumbnail){
 					    die('Error when creating the medium destination image.');
 					}
 					$mresult = imagecopyresampled($mthumbnail, $src_img, 0, 0, $srcx, $srcy, 300, 300, $srcw, $srch);
-					if(!$mresult) {
+					if(!$mresult){
 					    die('Error when generating the medium image.');
 					}
 					$mresult = imagepng($mthumbnail, $murl);
-					if(!$mresult) {
+					if(!$mresult){
 					    die('Error when saving the medium image.');
 					}
 					$mresult = imagedestroy($mthumbnail);
-					if(!$mresult) {
+					if(!$mresult){
 					    die('Error when destroying the medium image.');
 					}
 					unset($mresult);
 					//large
-					$src_img = imagecreatefrompng($ourl);
-					if(!$src_img) {
+					$src_img = imagecreatefrompng($url_upload);
+					if(!$src_img){
 					    die('Error when reading the large source image.');
 					}
 					$lthumbnail = imagecreatetruecolor($lw, $lh);
-					if(!$lthumbnail) {
+					if(!$lthumbnail){
 					    die('Error when creating the large destination image.');
 					}
 					$lresult = imagecopyresampled($lthumbnail, $src_img, 0, 0, 0, 0, $lw, $lh, $width, $height);
-					if(!$lresult) {
+					if(!$lresult){
 					    die('Error when generating the large image.');
 					}
 					$lresult = imagepng($lthumbnail, $lurl);
-					if(!$lresult) {
+					if(!$lresult){
 					    die('Error when saving the large image.');
 					}
 					$lresult = imagedestroy($lthumbnail);
-					if(!$lresult) {
+					if(!$lresult){
 					    die('Error when destroying the large image.');
 					}
 					unset($lresult);
@@ -397,23 +389,7 @@ if ((($_FILES["file"]["type"] == "image/jpeg") || ($_FILES["file"]["type"] == "i
 		}
 	}
 	else {
-		die("Invalid file");
+		die('Invalid file');
 	}
-//echo("made it past GD");
-mysql_query("INSERT INTO `imgurls` (`uid`, `url`, `time`)
-VALUES ('$uid', '$location', '$time')");
 
-//echo("db insertion done<br />");
-
-$annotation = mysql_real_escape_string("<a href=\"profile.php?id=" . $uid . "\" style=\"color:rgb(0,119,0);\">" . $name . "</a> Uploaded a picture.<br />");
-$post = mysql_real_escape_string($_POST["post"]);
-$media = mysql_real_escape_string($location);//"<a href=\"images/upload/users/l/" . $location . "\"><img style=\"max-width:300px;\" src=\"images/upload/users/m/" . $location . "\" /></a>";
-
-$day = date('l');
-
-$sqlb = "INSERT INTO `posts` (`fid`, `annotation`, `post`, `media`, `day`, `time`)
-VALUES ('$uid', '$annotation', '$post', '$media', '$day', '$time')";
-$success=mysql_query($sqlb);
-
-header("Location: profile.php");
 ?>
