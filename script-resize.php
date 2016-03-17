@@ -79,10 +79,14 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 				
 				$srcw = $width;
 				$srch = $height;
-				0 = 0;
-				0 = ($height-$width)/2;
-				$lw = 800*$width/$height;
-				$lh = 800;
+				
+				$l = 800;
+				$lw = $l*$width/$height;
+				$lh = $l;
+				
+				$mini = 120;
+				$miniw = $mini*$width/$height;
+				$minih = $mini;
 				
 				$miniurl = $url_resized . time() . '-' $minix . 'x' . $miniy . '-' . $filename . '.' . $extension;
 				$lurl = $url_resized . time() . '-' $lx . 'x' . $ly . '-' . $filename . '.' . $extension;
@@ -123,23 +127,6 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 							break;
 						} 
 					}
-					$thumbnail = imagecreatetruecolor(40, 40);
-					if(!$thumbnail){
-					    die('Error when creating the destination image.');
-					}
-					$result = imagecopyresampled($thumbnail, $src_img, 0, 0, 0, 0, 40, 40, $srcw, $srch);
-					if(!$result){
-					    die('Error when generating the thumbnail.');
-					}
-					$result = imagejpeg($thumbnail, $purl);
-					if(!$result){
-					    die('Error when saving the thumbnail.');
-					}
-					$result = imagedestroy($thumbnail);
-					if(!$result){
-					    die('Error when destroying the image.');
-					}
-					unset($result);
 					//mini
 					$src_img = imagecreatefromjpeg($url_upload);
 					if(!$src_img){
@@ -159,11 +146,11 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 							break;
 						} 
 					}
-					$minithumbnail = imagecreatetruecolor(40, 40);
+					$minithumbnail = imagecreatetruecolor($minix, $miniy);
 					if(!$minithumbnail){
 					    die('Error when creating the mini destination image.');
 					}
-					$miniresult = imagecopyresampled($minithumbnail, $src_img, 0, 0, 0, 0, 40, 40, $srcw, $srch);
+					$miniresult = imagecopyresampled($minithumbnail, $src_img, 0, 0, 0, 0, $minix, $miniy, $srcw, $srch);
 					if(!$miniresult){
 					    die('Error when generating the mini thumbnail.');
 					}
@@ -219,11 +206,11 @@ if(($_FILES['file']['type'] == 'image/jpeg' || $_FILES['file']['type'] == 'image
 					if(!$src_img){
 					    die('Error when reading the mini source image.');
 					}
-					$minithumbnail = imagecreatetruecolor(40, 40);
+					$minithumbnail = imagecreatetruecolor($minix, $miniy);
 					if(!$minithumbnail){
 					    die('Error when creating the mini destination image.');
 					}
-					$miniresult = imagecopyresampled($minithumbnail, $src_img, 0, 0, 0, 0, 40, 40, $srcw, $srch);
+					$miniresult = imagecopyresampled($minithumbnail, $src_img, 0, 0, 0, 0, $minix, $miniy, $srcw, $srch);
 					if(!$miniresult){
 					    die('Error when generating the mini thumbnail.');
 					}
